@@ -1,0 +1,56 @@
+const express = require("express");
+const router = express.Router();
+const { OrderModel } = require("../models/order");
+const { ProductModel } = require("../models/product");
+
+router.post("/add", authMiddleware, async (req, res) => {
+  const orderData = req.body;
+  try {
+    // Find the product by its ID
+    const product = await ProductModel.findById(orderData.productId);
+
+    // Find the phoneColour object in the phoneColour array with the given ID
+    const phoneColour = product.phoneColour.find(
+      (color) => color._id.toString() === orderData.phoneColourId
+    );
+
+    if (!phoneColour) {
+      return res.status(404).json({ msg: "Phone colour not found in product" });
+    }
+
+    // Check if the order quantity is greater than the phoneColour quantity
+    if (orderData.quantity > phoneColour.quantity) {
+      return res.status(400).json({ msg: "Not enough stock available" });
+    }
+
+    // Subtract the ordered quantity from the phoneColour quantity
+    phoneColour.quantity -= orderData.quantity;
+    await product.save();
+
+    // Create the order
+    const order = new OrderModel({
+      username: orderData.username,
+      // Add other properties from orderData
+      // ...
+    });
+
+    // Add the product to the order's products array
+    order.products.push({
+      productId: orderData.productId,
+      phoneColourId: orderData.phoneColourId,
+      quantity: orderData.quantity,
+      // Add other properties from the product and orderData
+      // ...
+    });
+
+    // Save the order
+    await order.save();
+
+    res.json({ msg: "Order added successfully" });
+  } catch (error) {
+    console.error("Error adding order:", error);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+});
+
+module.exports = router;

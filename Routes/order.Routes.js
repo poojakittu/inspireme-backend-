@@ -183,17 +183,17 @@ OrderRoutes.post("/add", authMiddleware, async (req, res) => {
     }
   });
   
-  // OrderRoutes.post("/add", authMiddleware, async (req, res) => {
-  //   let data = req.body;
-  //   try {
-  //     let data1 = new OrderModel(data);
-  //     await data1.save();
+  OrderRoutes.post("/add", authMiddleware, async (req, res) => {
+    let data = req.body;
+    try {
+      let data1 = new OrderModel(data);
+      await data1.save();
   
-  //     res.send({ msg: "Data Added" });
-  //   } catch (err) {
-  //     res.send(err);
-  //   }
-  // });
+      res.send({ msg: "Data Added" });
+    } catch (err) {
+      res.send(err);
+    }
+  });
   
   // OrderRoutes.post("/add", authMiddleware, async (req, res) => {
   //   //const orderData = req.body;

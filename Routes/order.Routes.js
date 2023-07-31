@@ -195,40 +195,40 @@ OrderRoutes.post("/add", authMiddleware, async (req, res) => {
   //   }
   // });
   
-  OrderRoutes.post("/add", authMiddleware, async (req, res) => {
-    //const orderData = req.body;
-    const orderData = req.body.products;
-    try {
-      // Find the product by its ID
-      const productIds = orderData?.map((product) => product.productId);
-      const productIdsColour = orderData?.map((product) => product.colourID);
-      const productIdsAsString = productIds.map((id) => id.toString());
-      const colourProductIdsAsString = productIdsColour.map((id) =>
-        id.toString()
-      );
+  // OrderRoutes.post("/add", authMiddleware, async (req, res) => {
+  //   //const orderData = req.body;
+  //   const orderData = req.body.products;
+  //   try {
+  //     // Find the product by its ID
+  //     const productIds = orderData?.map((product) => product.productId);
+  //     const productIdsColour = orderData?.map((product) => product.colourID);
+  //     const productIdsAsString = productIds.map((id) => id.toString());
+  //     const colourProductIdsAsString = productIdsColour.map((id) =>
+  //       id.toString()
+  //     );
     
-      const x = await ProductModel.findById(productIdsAsString);
+  //     const x = await ProductModel.findById(productIdsAsString);
     
-      if (x) {
-        // Iterate through the phoneColour array and update the quantity if there is a match
-        x.phoneColour.forEach((el) => {
-          if (colourProductIdsAsString.includes(el._id.toString())) {
-            const index = colourProductIdsAsString.indexOf(el._id.toString());
-            el.quantity -= orderData[index].quantity;
-          }
-        });
+  //     if (x) {
+  //       // Iterate through the phoneColour array and update the quantity if there is a match
+  //       x.phoneColour.forEach((el) => {
+  //         if (colourProductIdsAsString.includes(el._id.toString())) {
+  //           const index = colourProductIdsAsString.indexOf(el._id.toString());
+  //           el.quantity -= orderData[index].quantity;
+  //         }
+  //       });
     
-        // Save the updated product
-        await x.save();
-        console.log("Product updated successfully:", x);
-      } else {
-        console.log("Product not found.");
-      }
-    } catch (error) {
-      console.error("Error updating product quantity:", error);
-    }
+  //       // Save the updated product
+  //       await x.save();
+  //       console.log("Product updated successfully:", x);
+  //     } else {
+  //       console.log("Product not found.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating product quantity:", error);
+  //   }
     
-  });
+  // });
   
   OrderRoutes.patch("/update/:id", authMiddleware, async (req, res) => {
     const user = req.body.userId;

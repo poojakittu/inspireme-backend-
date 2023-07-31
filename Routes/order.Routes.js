@@ -83,19 +83,58 @@ OrderRoutes.get("/:id", async (req, res) => {
   }
 });
 
-OrderRoutes.post("/add", authMiddleware, async (req, res) => {
-  let data = req.body;
-  try {
-    let data1 = new OrderModel(data);
-    await data1.save();
+// OrderRoutes.post("/add", authMiddleware, async (req, res) => {
+//   let data = req.body;
+//   try {
+//     let data1 = new OrderModel(data);
+//     await data1.save();
 
-    res.send({ msg: "Data Added" });
-  } catch (err) {
-    res.send(err);
+//     res.send({ msg: "Data Added" });
+//   } catch (err) {
+//     res.send(err);
+//   }
+// });
+
+OrderRoutes.post("/add", authMiddleware, async (req, res) => {
+  //const orderData = req.body;
+  const orderData = req.body.products;
+  try {
+    // Find the product by its ID
+
+    const productIds = orderData?.map((product) => product.productId);
+     const productIdsAsString = productIds.map((id) => id.toString());
+         
+
+    const x=await ProductModel.find({_id:"64c0ec24ebe97949efc0611f"})
+    console.log(x)
+
+    // Find the phoneColour object in the phoneColour array with the given ID
+    // const phoneColour = product.phoneColour.find(
+    //   (color) => color._id.toString() === orderData.colourID
+    // );
+
+    // if (!phoneColour) {
+    //   return res.status(404).json({ msg: "Phone colour not found in product" });
+    // }
+
+    // // Check if the order quantity is greater than the phoneColour quantity
+    // if (orderData.quantity > phoneColour.quantity) {
+    //   return res.status(400).json({ msg: "Not enough stock available" });
+    // }
+
+    // // Subtract the ordered quantity from the phoneColour quantity
+    // phoneColour.quantity -= orderData.quantity;
+    // await product.save();
+
+    // let data1 = new OrderModel(orderData);
+    //  await data1.save();
+
+    // res.send({ msg: "Data Added" });
+  } catch (error) {
+    console.error("Error adding order:", error);
+    res.status(500).json({ msg: "Internal server error" });
   }
 });
-
-
 
 OrderRoutes.patch("/update/:id", authMiddleware, async (req, res) => {
   const user = req.body.userId;
@@ -118,13 +157,13 @@ OrderRoutes.patch("/update/:id", authMiddleware, async (req, res) => {
   }
 });
 
-OrderRoutes.patch("/cancel/:orderId",authMiddleware, async (req, res) => {
+OrderRoutes.patch("/cancel/:orderId", authMiddleware, async (req, res) => {
   const { orderId } = req.params;
 
   try {
     const order = await OrderModel.findById(orderId);
     const x = order.products.find((el) => el._id.toString() === req.body.Id);
-    
+
     if (x) {
       x.status = "Cancelled";
       const y = await order.save();
@@ -132,7 +171,7 @@ OrderRoutes.patch("/cancel/:orderId",authMiddleware, async (req, res) => {
     } else {
       console.log("Product not found in order");
     }
-    
+
     // Rest of your code...
 
     // if (!order) {
@@ -152,7 +191,6 @@ OrderRoutes.patch("/cancel/:orderId",authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 OrderRoutes.patch("/changestatus/:id", async (req, res) => {
   try {

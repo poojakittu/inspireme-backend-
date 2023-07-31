@@ -24,7 +24,7 @@ const cartSchema = new mongoose.Schema(
     colourID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "colour",
-      required: true,
+     
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

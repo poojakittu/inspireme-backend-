@@ -100,40 +100,34 @@ OrderRoutes.post("/add", authMiddleware, async (req, res) => {
   const orderData = req.body.products;
   try {
     // Find the product by its ID
-
     const productIds = orderData?.map((product) => product.productId);
-     const productIdsAsString = productIds.map((id) => id.toString());
-         
-
-    const x=await ProductModel.find({_id:"64c0ec24ebe97949efc0611f"})
-    console.log(x)
-
-    // Find the phoneColour object in the phoneColour array with the given ID
-    // const phoneColour = product.phoneColour.find(
-    //   (color) => color._id.toString() === orderData.colourID
-    // );
-
-    // if (!phoneColour) {
-    //   return res.status(404).json({ msg: "Phone colour not found in product" });
-    // }
-
-    // // Check if the order quantity is greater than the phoneColour quantity
-    // if (orderData.quantity > phoneColour.quantity) {
-    //   return res.status(400).json({ msg: "Not enough stock available" });
-    // }
-
-    // // Subtract the ordered quantity from the phoneColour quantity
-    // phoneColour.quantity -= orderData.quantity;
-    // await product.save();
-
-    // let data1 = new OrderModel(orderData);
-    //  await data1.save();
-
-    // res.send({ msg: "Data Added" });
+    const productIdsColour = orderData?.map((product) => product.colourID);
+    const productIdsAsString = productIds.map((id) => id.toString());
+    const colourProductIdsAsString = productIdsColour.map((id) =>
+      id.toString()
+    );
+  
+    const x = await ProductModel.findById(productIdsAsString);
+  
+    if (x) {
+      // Iterate through the phoneColour array and update the quantity if there is a match
+      x.phoneColour.forEach((el) => {
+        if (colourProductIdsAsString.includes(el._id.toString())) {
+          const index = colourProductIdsAsString.indexOf(el._id.toString());
+          el.quantity -= orderData[index].quantity;
+        }
+      });
+  
+      // Save the updated product
+      await x.save();
+      console.log("Product updated successfully:", x);
+    } else {
+      console.log("Product not found.");
+    }
   } catch (error) {
-    console.error("Error adding order:", error);
-    res.status(500).json({ msg: "Internal server error" });
+    console.error("Error updating product quantity:", error);
   }
+  
 });
 
 OrderRoutes.patch("/update/:id", authMiddleware, async (req, res) => {

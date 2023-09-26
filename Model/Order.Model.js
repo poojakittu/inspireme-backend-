@@ -62,10 +62,7 @@ const orderSchema = new mongoose.Schema(
       ref: "user",
       required: true,
     },
-    cartId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "cart",
-    },
+    
     orderDate: { type: Date, default: Date.now },
   },
   {
